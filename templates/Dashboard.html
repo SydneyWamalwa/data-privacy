@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 2rem; }
+        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+        .card { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); }
+        .chart-container { height: 300px; }
+        .metric { text-align: center; padding: 1rem; }
+        .metric-value { font-size: 2.5em; color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Privacy-Preserving Customer Insights</h1>
+
+    <div class="dashboard">
+        <div class="card metric">
+            <div class="metric-value" id="totalCustomers">0</div>
+            <div>Total Tracked Users</div>
+        </div>
+
+        <div class="card metric">
+            <div class="metric-value" id="avgBudget">$0</div>
+            <div>Average Budget</div>
+        </div>
+
+        <div class="card">
+            <h3>Customer Segments</h3>
+            <div class="chart-container">
+                <canvas id="segmentsChart"></canvas>
+            </div>
+            <p>Groups of users with similar spending patterns</p>
+        </div>
+
+        <div class="card">
+            <h3>Interest Distribution</h3>
+            <div class="chart-container">
+                <canvas id="interestsChart"></canvas>
+            </div>
+            <p>Most common interest categories</p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize charts
+        const segmentsChart = new Chart(document.getElementById('segmentsChart'), {
+            type: 'bar',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Users per Segment',
+                    data: [],
+                    backgroundColor: '#3498db'
+                }]
+            }
+        });
+
+        const interestsChart = new Chart(document.getElementById('interestsChart'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Tech', 'Finance', 'Sports', 'Health', 'Education'],
+                datasets: [{
+                    data: [0, 0, 0, 0, 0],
+                    backgroundColor: ['#3498db', '#2ecc71', '#9b59b6', '#f1c40f', '#e74c3c']
+                }]
+            }
+        });
+
+        // Update data every 5 seconds
+        async function updateDashboard() {
+            try {
+                const response = await fetch('/api/segments');
+                const data = await response.json();
+
+                // Update metrics
+                document.getElementById('totalCustomers').textContent = data.participants;
+                document.getElementById('avgBudget').textContent =
+                    `$${data.stats.average_budget.toFixed(2)}`;
+
+                // Update segments chart
+                const segmentCounts = data.segments.reduce((acc, seg) => {
+                    acc[seg] = (acc[seg] || 0) + 1;
+                    return acc;
+                }, []);
+
+                segmentsChart.data.labels = Object.keys(segmentCounts).map(k => `Group ${parseInt(k)+1}`);
+                segmentsChart.data.datasets[0].data = Object.values(segmentCounts);
+                segmentsChart.update();
+
+                // Update interests chart
+                const interestData = Array(5).fill(0);
+                interestData[data.stats.common_interests - 1] = data.participants;
+                interestsChart.data.datasets[0].data = interestData;
+                interestsChart.update();
+
+            } catch (error) {
+                console.error('Dashboard update error:', error);
+            }
+        }
+
+        // Initial load and auto-refresh
+        updateDashboard();
+        setInterval(updateDashboard, 5000);
+    </script>
+</body>
+</html>

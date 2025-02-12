@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Set Preferences</title>
+  <link rel="stylesheet" href="/frontend/src/static/style.css">
+</head>
+<body>
+  <div class="preferences-form">
+    <h1>Set Your Preferences</h1>
+    <form id="preferences-form">
+      <label for="budget">Budget:</label>
+      <input type="range" id="budget" name="budget" min="500" max="1000" step="50">
+      <br>
+
+      <label for="interests">Interests:</label>
+      <input type="checkbox" id="tech" name="interests" value="Tech"> Tech
+      <input type="checkbox" id="finance" name="interests" value="Finance"> Finance
+      <input type="checkbox" id="sports" name="interests" value="Sports"> Sports
+      <input type="checkbox" id="health" name="interests" value="Health"> Health
+      <input type="checkbox" id="education" name="interests" value="Education"> Education
+      <br>
+
+      <button type="submit">Save Preferences</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('preferences-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const budget = document.getElementById('budget').value;
+      const interests = Array.from(document.querySelectorAll('input[name="interests"]:checked')).map(el => el.value);
+
+      try {
+        const response = await fetch('http://localhost:5001/api/save-preferences', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-User-ID': 'user_' + Math.random().toString(36).substr(2, 9)
+          },
+          body: JSON.stringify({
+            prefs: {
+              budget,
+              interests
+            }
+          })
+        });
+
+        if (response.ok) {
+          window.location.href = '/dashboard';
+        }
+      } catch (error) {
+        console.error('Submission failed:', error);
+      }
+    });
+  </script>
+</body>
+</html>

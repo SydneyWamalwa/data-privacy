@@ -8,3 +8,7 @@ root.render(
     <App />
   </React.StrictMode>
 );
+
+window.process = {
+  ...window.process,
+};
