@@ -1,146 +1,232 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Dashboard</title>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 2rem;
-            background-color: #f4f4f4;
-        }
-
-        h1 {
-            text-align: center;
-        }
-
-        .dashboard {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1rem;
-        }
-
-        .card {
-            background: white;
-            padding: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-
-        .metric {
-            padding: 1rem;
-        }
-
-        .metric-value {
-            font-size: 2.5em;
-            color: #2c3e50;
-        }
-
-        .chart-container {
-            height: 300px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Dashboard - Detailed Insights</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f4f4f4;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .dashboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+    .card {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+    .metric {
+      padding: 1rem;
+    }
+    .metric-value {
+      font-size: 2.5em;
+      color: #2c3e50;
+    }
+    .chart-container {
+      height: 300px;
+    }
+    .segment-detail {
+      text-align: left;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      border-top: 1px solid #ddd;
+    }
+    .segment-detail h4 {
+      margin-bottom: 0.5rem;
+    }
+    .segment-detail p {
+      margin: 0.25rem 0;
+    }
+    .stats-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+    .stats-table th, .stats-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+    }
+    .stats-table th {
+      background-color: #f2f2f2;
+    }
+    .explanation {
+      text-align: left;
+      font-size: 0.9em;
+      color: #555;
+      margin-top: 1rem;
+    }
+  </style>
 </head>
 <body>
-
-    <h1>Privacy-Preserving Customer Insights</h1>
-
-    <div class="dashboard">
-        <!-- Total Customers -->
-        <div class="card metric">
-            <div class="metric-value" id="totalCustomers">0</div>
-            <div>Total Tracked Users</div>
-        </div>
-
-        <!-- Average Budget -->
-        <div class="card metric">
-            <div class="metric-value" id="avgBudget">$0</div>
-            <div>Average Budget</div>
-        </div>
-
-        <!-- Customer Segments -->
-        <div class="card">
-            <h3>Customer Segments</h3>
-            <div class="chart-container">
-                <canvas id="segmentsChart"></canvas>
-            </div>
-            <p>Groups of users with similar spending patterns</p>
-        </div>
-
-        <!-- Interest Distribution -->
-        <div class="card">
-            <h3>Interest Distribution</h3>
-            <div class="chart-container">
-                <canvas id="interestsChart"></canvas>
-            </div>
-            <p>Most common interest categories</p>
-        </div>
+  <h1>Privacy-Preserving Customer Insights</h1>
+  <h2>Detailed Dashboard for Data-Driven Decisions</h2>
+  <div class="dashboard">
+    <!-- Main Metrics -->
+    <div class="card metric">
+      <div class="metric-value" id="totalCustomers">0</div>
+      <div>Total Tracked Users</div>
     </div>
+    <div class="card metric">
+      <div class="metric-value" id="avgBudget">$0</div>
+      <div>Average Budget</div>
+    </div>
+    <div class="card metric">
+      <div class="metric-value" id="medianBudget">$0</div>
+      <div>Median Budget</div>
+    </div>
+    <div class="card metric">
+      <div class="metric-value" id="stdBudget">$0</div>
+      <div>Budget Std. Deviation</div>
+    </div>
+    <!-- Charts -->
+    <div class="card">
+      <h3>Customer Segments</h3>
+      <div class="chart-container">
+        <canvas id="segmentsChart"></canvas>
+      </div>
+      <p>Groups of users with similar spending patterns</p>
+      <!-- Detailed segment information -->
+      <div id="segmentDetails">
+        Detailed segment information is currently unavailable.
+      </div>
+    </div>
+    <div class="card">
+      <h3>Interest Distribution</h3>
+      <div class="chart-container">
+        <canvas id="interestsChart"></canvas>
+      </div>
+      <p>Most common interest categories</p>
+    </div>
+    <!-- Additional Detailed Statistics -->
+    <div class="card">
+      <h3>Budget Overview</h3>
+      <table class="stats-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Minimum Budget</td>
+            <td id="minBudget">$0</td>
+          </tr>
+          <tr>
+            <td>Maximum Budget</td>
+            <td id="maxBudget">$0</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="explanation">
+        <p><strong>Explanation:</strong> These metrics help you quickly grasp the spread of customer budgets. Even if you’re not a math expert, the range and variability provide insights into customer spending power.</p>
+      </div>
+    </div>
+  </div>
 
-    <script>
-        // Initialize charts
-        const segmentsChart = new Chart(document.getElementById('segmentsChart'), {
-            type: 'bar',
-            data: {
-                labels: [],
-                datasets: [{
-                    label: 'Users per Segment',
-                    data: [],
-                    backgroundColor: '#3498db'
-                }]
-            }
-        });
+  <script>
+    // Initialize charts
+    const segmentsChart = new Chart(document.getElementById('segmentsChart'), {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Users per Segment',
+          data: [],
+          backgroundColor: '#3498db'
+        }]
+      }
+    });
 
-        const interestsChart = new Chart(document.getElementById('interestsChart'), {
-            type: 'doughnut',
-            data: {
-                labels: ['Tech', 'Finance', 'Sports', 'Health', 'Education'],
-                datasets: [{
-                    data: [0, 0, 0, 0, 0],
-                    backgroundColor: ['#3498db', '#2ecc71', '#9b59b6', '#f1c40f', '#e74c3c']
-                }]
-            }
-        });
+    const interestsChart = new Chart(document.getElementById('interestsChart'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Tech', 'Finance', 'Sports', 'Health', 'Education'],
+        datasets: [{
+          data: [0, 0, 0, 0, 0],
+          backgroundColor: ['#3498db', '#2ecc71', '#9b59b6', '#f1c40f', '#e74c3c']
+        }]
+      }
+    });
 
-        // Update data every 5 seconds
-        async function updateDashboard() {
-            try {
-                const response = await fetch('/api/segments'); // Ensure this API exists in Flask
-                const data = await response.json();
+    // Update dashboard data every 5 seconds
+    async function updateDashboard() {
+      try {
+        const response = await fetch('/api/segments');
+        const data = await response.json();
 
-                // Update metrics
-                document.getElementById('totalCustomers').textContent = data.participants;
-                document.getElementById('avgBudget').textContent = `$${data.stats.average_budget.toFixed(2)}`;
+        // Update main metrics
+        document.getElementById('totalCustomers').textContent = data.participants;
+        document.getElementById('avgBudget').textContent = `$${data.stats.average_budget.toFixed(2)}`;
+        document.getElementById('medianBudget').textContent = `$${data.stats.median_budget.toFixed(2)}`;
+        document.getElementById('stdBudget').textContent = `$${data.stats.std_budget.toFixed(2)}`;
+        document.getElementById('minBudget').textContent = `$${data.stats.min_budget.toFixed(2)}`;
+        document.getElementById('maxBudget').textContent = `$${data.stats.max_budget.toFixed(2)}`;
 
-                // Update segments chart
-                const segmentCounts = data.segments.reduce((acc, seg) => {
-                    acc[seg] = (acc[seg] || 0) + 1;
-                    return acc;
-                }, []);
-                segmentsChart.data.labels = Object.keys(segmentCounts).map(k => `Group ${parseInt(k) + 1}`);
-                segmentsChart.data.datasets[0].data = Object.values(segmentCounts);
-                segmentsChart.update();
+        // Update segments chart
+        const segmentCounts = data.segments.reduce((acc, seg) => {
+          acc[seg] = (acc[seg] || 0) + 1;
+          return acc;
+        }, {});
+        segmentsChart.data.labels = Object.keys(segmentCounts).map(k => `Group ${parseInt(k) + 1}`);
+        segmentsChart.data.datasets[0].data = Object.values(segmentCounts);
+        segmentsChart.update();
 
-                // Update interests chart
-                const interestData = Array(5).fill(0);
-                interestData[data.stats.common_interests - 1] = data.participants;
-                interestsChart.data.datasets[0].data = interestData;
-                interestsChart.update();
-
-            } catch (error) {
-                console.error('Dashboard update error:', error);
-            }
+        // Update interests chart
+        const interestData = Array(5).fill(0);
+        // Here we assume data.stats.common_interests is a string such as "tech" or "sports"
+        // We map it to the index in the interestsChart labels:
+        const interestMapping = {
+          "tech": 0,
+          "finance": 1,
+          "sports": 2,
+          "health": 3,
+          "education": 4
+        };
+        if (interestMapping.hasOwnProperty(data.stats.common_interests)) {
+          interestData[interestMapping[data.stats.common_interests]] = data.participants;
         }
+        interestsChart.data.datasets[0].data = interestData;
+        interestsChart.update();
 
-        // Initial load and auto-refresh every 5s
-        updateDashboard();
-        setInterval(updateDashboard, 5000);
-    </script>
+        // Update detailed segment information including product recommendation and key preference
+        const segmentDetailsContainer = document.getElementById('segmentDetails');
+        segmentDetailsContainer.innerHTML = '';
+        if (data.segmentDetails && data.segmentDetails.length > 0) {
+          data.segmentDetails.forEach(segment => {
+            const segmentDiv = document.createElement('div');
+            segmentDiv.className = 'segment-detail';
+            segmentDiv.innerHTML = `
+              <h4>Segment ${segment.segmentId}</h4>
+              <p><strong>Description:</strong> ${segment.description}</p>
+              <p><strong>Key Preference:</strong> ${segment.preferences}</p>
+              <p><strong>Average Target Price:</strong> $${segment.avgTargetPrice.toFixed(2)}</p>
+              <p><strong>Recommended Product:</strong> ${segment.recommendedProduct}</p>
+            `;
+            segmentDetailsContainer.appendChild(segmentDiv);
+          });
+        } else {
+          segmentDetailsContainer.innerHTML = '<p>Detailed segment information is currently unavailable.</p>';
+        }
+      } catch (error) {
+        console.error('Dashboard update error:', error);
+      }
+    }
 
+    // Initial load and auto-refresh every 5 seconds
+    updateDashboard();
+    setInterval(updateDashboard, 5000);
+  </script>
 </body>
 </html>
