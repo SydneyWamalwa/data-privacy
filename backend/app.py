@@ -91,15 +91,23 @@ def serve_static(path):
     return send_from_directory("frontend/build/static", path)
 
 @app.route("/")
+def serve_index():
+    try:
+        return render_template("index.html")
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, "static"), "favicon.ico")
+
+@app.route("/dashboard")
 def serve_dashboard():
     try:
         return render_template("Dashboard.html")
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-@app.route("/favicon.ico")
-def favicon():
-    return send_from_directory(os.path.join(app.root_path, "static"), "favicon.ico")
 
 # API Routes
 @app.route("/api/save-preferences", methods=["POST"])
