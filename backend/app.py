@@ -11,7 +11,13 @@ import logging
 from synthetic_data import generate_synthetic_clients
 from flask_cors import CORS
 
-app = Flask(__name__, template_folder="templates", static_folder="frontend/build/static")
+# Determine the base directory (one level up from backend)
+basedir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+# Set the template and static directories using absolute paths
+template_dir = os.path.join(basedir, "templates")
+static_dir = os.path.join(basedir, "frontend/build/static")
+app = Flask(__name__, template_folder=template_dir, static_folder=static_dir)
 CORS(app)
 app.logger.setLevel(logging.INFO)
 
@@ -89,8 +95,7 @@ def serve_dashboard():
     try:
         return render_template("Dashboard.html")
     except Exception as e:
-        app.logger.error(f"Error rendering template: {e}")
-        return jsonify({"error": "Dashboard file missing or cannot be rendered"}), 500
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/favicon.ico")
 def favicon():

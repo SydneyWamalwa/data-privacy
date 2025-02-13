@@ -4,30 +4,66 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Dashboard</title>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
-        body { font-family: Arial, sans-serif; margin: 2rem; }
-        .dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
-        .card { background: white; padding: 1rem; border-radius: 8px; box-shadow: 0 2px 15px rgba(0,0,0,0.1); }
-        .chart-container { height: 300px; }
-        .metric { text-align: center; padding: 1rem; }
-        .metric-value { font-size: 2.5em; color: #2c3e50; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+        }
+
+        .card {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .metric {
+            padding: 1rem;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            color: #2c3e50;
+        }
+
+        .chart-container {
+            height: 300px;
+        }
     </style>
 </head>
 <body>
+
     <h1>Privacy-Preserving Customer Insights</h1>
 
     <div class="dashboard">
+        <!-- Total Customers -->
         <div class="card metric">
             <div class="metric-value" id="totalCustomers">0</div>
             <div>Total Tracked Users</div>
         </div>
 
+        <!-- Average Budget -->
         <div class="card metric">
             <div class="metric-value" id="avgBudget">$0</div>
             <div>Average Budget</div>
         </div>
 
+        <!-- Customer Segments -->
         <div class="card">
             <h3>Customer Segments</h3>
             <div class="chart-container">
@@ -36,6 +72,7 @@
             <p>Groups of users with similar spending patterns</p>
         </div>
 
+        <!-- Interest Distribution -->
         <div class="card">
             <h3>Interest Distribution</h3>
             <div class="chart-container">
@@ -73,21 +110,19 @@
         // Update data every 5 seconds
         async function updateDashboard() {
             try {
-                const response = await fetch('/api/segments');
+                const response = await fetch('/api/segments'); // Ensure this API exists in Flask
                 const data = await response.json();
 
                 // Update metrics
                 document.getElementById('totalCustomers').textContent = data.participants;
-                document.getElementById('avgBudget').textContent =
-                    `$${data.stats.average_budget.toFixed(2)}`;
+                document.getElementById('avgBudget').textContent = `$${data.stats.average_budget.toFixed(2)}`;
 
                 // Update segments chart
                 const segmentCounts = data.segments.reduce((acc, seg) => {
                     acc[seg] = (acc[seg] || 0) + 1;
                     return acc;
                 }, []);
-
-                segmentsChart.data.labels = Object.keys(segmentCounts).map(k => `Group ${parseInt(k)+1}`);
+                segmentsChart.data.labels = Object.keys(segmentCounts).map(k => `Group ${parseInt(k) + 1}`);
                 segmentsChart.data.datasets[0].data = Object.values(segmentCounts);
                 segmentsChart.update();
 
@@ -102,9 +137,10 @@
             }
         }
 
-        // Initial load and auto-refresh
+        // Initial load and auto-refresh every 5s
         updateDashboard();
         setInterval(updateDashboard, 5000);
     </script>
+
 </body>
 </html>
